@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "../singleComic/singleComic.scss"
+    ],
+    "names": [],
+    "file": "singleComic.min.css"
+}
