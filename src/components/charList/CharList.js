@@ -80,13 +80,6 @@ const CharList = (props) => {
   const spinner = loading && !newItemLoading ? <Spinner/> : null;
   const errorMessage = error ? <ErrorMessage/> : null;
 
-
-  if (loading) {
-    import('./someFunc')
-      .then(obj => obj.secondLogger())
-      .catch()
-  }
-
   return (
     <div className="char__list">
       {spinner}

@@ -16,7 +16,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -b master -d build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -43,5 +43,6 @@
   "devDependencies": {
     "sass": "^1.55.0"
   },
-  "homepage": "https://Puzynia25.github.io"
+  "homepage": "https://myusername.github.io/my-app"
+
 }
