@@ -19,7 +19,7 @@ const AppHeader = () => {
                 /
                 <li><NavLink 
                         style={({isActive}) => ({color: isActive ? '#9F0013' : 'inherit'})} 
-                        to="marvelApp/comics">Comics</NavLink></li>
+                        to="/marvelApp/comics">Comics</NavLink></li>
                 </ul>
             </nav>
         </header>
