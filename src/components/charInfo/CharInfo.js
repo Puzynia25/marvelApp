@@ -1,83 +1,50 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
+import { Link } from 'react-router-dom';
 
-class CharInfo extends Component {
-    state = {
-        char: null,
-        loading: false,
-        error: false
+const CharInfo = (props) => {
+    const [char, setChar] = useState(null);
+
+    const {loading, error, getCharacter, clearError} = useMarvelService();
+
+    useEffect(() => {
+        updateChar();
+    }, [props.charId])
+
+    const onCharLoaded = (char) => {
+        setChar(char);
     }
 
-    marvelService = new MarvelService();
-
-    componentDidMount() {
-        this.updateChar();
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.charId !== prevProps.charId) {
-            this.updateChar();
-        }
-    }
-
-    onCharLoading = () => { 
-        this.setState({
-            loading: true
-        }) 
-    }
-
-    onCharLoaded = (char) => {
-        this.setState({
-            char,
-            loading: false
-        }) 
-    }
-
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        })
-    }
-
-    updateChar = () => {
-        const {charId} = this.props;
+    const updateChar = () => {
+        const {charId} = props;
         if (!charId) {
             return;
         }
-
-        this.onCharLoading();
-
-        this.marvelService
-            .getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
+        clearError();
+        getCharacter(charId)
+            .then(onCharLoaded)
     }
 
-    render () {
-        const {char, loading, error} = this.state;
+    const skeleton = char || loading || error ? null :  <Skeleton/>;
+    const errorMessage = error ? <ErrorMessage/> : null;
+    const spinner = loading ? <Spinner/> : null;
+    const content = !(loading || error || !char) ? <View charContent={char}/> : null;
 
-        const skeleton = char || loading || error ? null :  <Skeleton/>;
-        const errorMessage = error ? <ErrorMessage/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error || !char) ? <View charContent={char}/> : null;
-
-        return(
-            <div className="char__info">
-                {errorMessage}
-                {spinner}
-                {content}
-                {skeleton}
-            </div>
-        );
-    }
+    return(
+        <div className="char__info">
+            {errorMessage}
+            {spinner}
+            {content}
+            {skeleton}
+        </div>
+    );
 }
 
 const View = ({charContent}) => {
@@ -112,7 +79,8 @@ const View = ({charContent}) => {
                     comics.map((item, i) => {
                         while (i < 10) {
                             return (
-                                <li key={i} className="char__comics-item">{item.name}</li> 
+                                <li key={i} className="char__comics-item">
+                                    <Link to={item.resourceURI.replace('http://gateway.marvel.com/v1/public/', '')}>{item.name}</Link></li> 
                             )
                         }
                     })
