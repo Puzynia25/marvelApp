@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import React, {useState, useEffect, useRef} from 'react';
+import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -14,18 +14,20 @@ const CharList = (props) => {
   const [newItemLoading, setNewItemLoading] = useState(false);
   const [charListEnded, setCharListEnded] = useState(false);
 
-  //const nodeRef = useRef(null);
+  const nodeRef = useRef(null);
 
   const {loading, error, getAllCharacters} = useMarvelService();
 
   useEffect(() => { //запускается после рендера
     onRequest(offset, true);
+   
   }, []) //[] - функция выполнится только 1 раз
 
   const onRequest = (offset, initial) => { //запрос на сервер, когда кликаем на кнопку 'load more'
     initial ? setNewItemLoading(false) : setNewItemLoading(true);
     getAllCharacters(offset)
         .then(onCharListLoaded)
+        .then(() => props.onButton(true))
   }
 
   const onCharListLoaded = (newCharList) => {
@@ -54,14 +56,17 @@ const CharList = (props) => {
         classChar = 'char__item char__item_selected'
       }
 
+      const duration = 300;
+
       return (
         <CSSTransition 
-          key={i}
-          timeout={300} 
-          classNames="char"
-        >
+          nodeRef={nodeRef}
+          in={props.showCharlist}
+          timeout={duration} 
+          classNames="char">
             <li 
               className={classChar}
+              key={i}
               tabIndex={0}
               onClick={() => {
                 props.onCharSelected(item.id); 
@@ -71,24 +76,27 @@ const CharList = (props) => {
                   props.onCharSelected(item.id); 
                 }
               }}
-            >
+              ref={nodeRef}>
                 <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
                 <div className="char__name">{item.name}</div>
             </li>
         </CSSTransition>
       )
-    });
+    })
 
     return (
-      <TransitionGroup className="char__grid">
-        {items}
-      </TransitionGroup>
+      <ul  
+        className="char__grid">
+          {items}
+      </ul>
     )
   }
 
   const items = renderItems(charlist);
   const spinner = loading && !newItemLoading ? <Spinner/> : null;
   const errorMessage = error ? <ErrorMessage/> : null;
+
+  console.log(props.showCharlist);
 
   return (
       <div className="char__list">
