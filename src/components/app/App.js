@@ -8,6 +8,7 @@ const Page404 = lazy(() => import('../pages/404')); //динамический �
 const MainPage = lazy(() => import('../pages/MainPage'));
 const ComicsPage = lazy(() => import('../pages/ComicsPage'));
 const SingleComicPage = lazy(() => import('../pages/SingleComicPage'));
+const SingleCharLayout = lazy(() => import('../pages/SingleCharLayout'));
 
 const App = () => {
 
@@ -21,6 +22,7 @@ const App = () => {
                             <Route path="/marvelApp" element={<MainPage/>} />
                             <Route path="/marvelApp/comics" element={<ComicsPage/>} />
                             <Route path="/marvelApp/comics/:comicId" element={<SingleComicPage/>} />
+                            <Route path="/marvelApp/characters/:charId" element={<SingleCharLayout/>} />
                             <Route path="*" element={<Page404/>} />
                         </Routes>
                     </Suspense>
